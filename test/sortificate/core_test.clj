@@ -3,7 +3,7 @@
             [sortificate.core :refer :all]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
-            [clojure.test.check.clojure-test :refer [defspec]]i
+            [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.algo.monads :as m]))
 (m/defmonad gen-m
     [m-bind gen/bind
