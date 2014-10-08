@@ -25,33 +25,17 @@
      (let [instructions (map vector some-keys some-directions)]
        [some-maps instructions])))
 
-(defn size-of-2 [v]
-  (= 2 (count v)))
-
-(defspec my-generator-works 100
-  (prop/for-all
-    [[rows instructions] maps-and-sort-instructions]
-    (and (is (every? size-of-2 instructions))
-    (is (every? #{:ascending :descending} (map second instructions))
-        )
-    ;; every instruction key is in every map
-    (let [instruction-keys (map first instructions)
-          map-keys (map (comp set keys) rows)
-          contains-all (fn [containing containeds]
-                         (clojure.set/superset? containing containeds))]
-     (is (every? #(contains-all % instruction-keys) map-keys))))))
 
 ;; just the property, no "is"
- (prop/for-all
+(def sort-instructions-are-compatible-with-maps
+  (prop/for-all
     [[rows instructions] maps-and-sort-instructions]
-    (and (every? size-of-2 instructions)
-    (every? #{:ascending :descending} (map second instructions))
-    ;; every instruction key is in every map
-    (let [instruction-keys (map first instructions)
-          map-keys (map (comp set keys) rows)
-          contains-all (fn [containing containeds]
-                         (clojure.set/superset? containing containeds))]
-      (every? #(contains-all % instruction-keys) map-keys))))
+    (every? identity (for [[k direction] instructions]
+              (and (#{:ascending :descending} direction)
+                   (every? k rows))))))
+
+(defspec my-generator-works 20
+  sort-instructions-are-compatible-with-maps )
 
 ;; now can I write the real spec? maybe??
 (def a-real-spec
